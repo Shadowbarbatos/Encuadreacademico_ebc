@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller: Evaluación por competencias - Completo + Navegación</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* === ESTILOS GLOBALES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #ffffff;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            line-height: 1.6;
+            color: #1e1e1e;
+            scroll-behavior: smooth; /* Scroll suave al hacer clic en los botones */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* === BARRA DE NAVEGACIÓN (nueva) === */
+        .nav-secciones {
+            background: linear-gradient(135deg, #00686d, #45b9b4);
+            padding: 0.8rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .nav-secciones ul {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem 1.5rem;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-secciones a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            background-color: rgba(255,255,255,0.15);
+            transition: background 0.2s, transform 0.1s;
+            display: inline-block;
+        }
+
+        .nav-secciones a:hover {
+            background-color: #fad926;
+            color: #00686d;
+            transform: scale(1.05);
+        }
+
+        .nav-secciones i {
+            margin-right: 0.4rem;
+        }
+
+        /* === SECCIÓN ENCUADRE ACADÉMICO (flipcards) === */
+        .seccion-encuadre {
+            background-color: #ffffff;
+        }
+
+        .encuadre-banner {
+            background: linear-gradient(135deg, #fad926 0%, #f49823 100%);
+            color: #ffffff;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .encuadre-banner h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 0.5rem;
+        }
+
+        .encuadre-banner p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .encuadre-banner::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 180px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        .encuadre-banner::after {
+            content: "";
+            position: absolute;
+            bottom: -40px;
+            left: -40px;
+            width: 200px;
+            height: 200px;
+            background: rgba(0, 104, 109, 0.15);
+            border-radius: 50%;
+        }
+
+        .imagen-destacada-container {
+            padding: 0 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: -1.5rem;
+            margin-bottom: 0;
+        }
+
+        .imagen-destacada {
+            width: 100%;
+            height: auto;
+            border-radius: 24px;
+            box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.2);
+            display: block;
+            border: 4px solid white;
+            transition: transform 0.3s ease;
+        }
+
+        .imagen-destacada:hover {
+            transform: scale(1.01);
+        }
+
+        .encuadre-columnas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .flip-card {
+            flex: 1 1 300px;
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
+            perspective: 1500px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.2);
+        }
+
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flip-front, .flip-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flip-front {
+            background: linear-gradient(135deg, #fad926, #f49823);
+            color: #1e1e1e;
+        }
+
+        .flip-front i {
+            font-size: 3.5rem;
+            margin-bottom: 1.2rem;
+            color: white;
+            background: rgba(0, 0, 0, 0.2);
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .flip-front h3 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 1rem;
+        }
+
+        .click-hint {
+            font-size: 0.9rem;
+            background-color: rgba(255,255,255,0.25);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            color: #1e1e1e;
+            font-weight: 500;
+            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .click-hint i {
+            font-size: 1rem;
+            width: auto;
+            height: auto;
+            background: transparent;
+            box-shadow: none;
+            margin: 0;
+        }
+
+        .flip-back {
+            background: linear-gradient(145deg, #00686d, #45b9b4);
+            color: white;
+            transform: rotateY(180deg);
+            text-align: left;
+            overflow-y: auto;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .flip-back p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: white;
+            margin: 0;
+            text-align: left;
+        }
+
+        /* === SECCIÓN PRESENTACIÓN (carrusel) === */
+        .seccion-presentacion {
+            background-color: #ffffff;
+            padding: 2rem 0;
+        }
+
+        .seccion-presentacion h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00686d;
+            text-align: center;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+        }
+
+        .seccion-presentacion h2 i {
+            color: #f49823;
+            margin-right: 0.5rem;
+        }
+
+        .carrusel-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 32px;
+            box-shadow: 0 25px 40px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        .carrusel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carrusel-slide {
+            min-width: 100%;
+            padding: 3rem 2rem;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+        }
+
+        .carrusel-slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+            border-radius: 32px;
+        }
+
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 2.5rem;
+            border-radius: 30px;
+            max-width: 800px;
+            color: #1e1e1e;
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.2);
+            border-left: 8px solid #fad926;
+        }
+
+        .slide-content h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00686d;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slide-content h3 i {
+            color: #f49823;
+            font-size: 2rem;
+        }
+
+        .slide-content p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .carrusel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #fad926, #f49823);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            font-size: 1.5rem;
+        }
+
+        .carrusel-btn:hover {
+            transform: translateY(-50%) scale(1.1);
+            background: linear-gradient(135deg, #f49823, #fad926);
+        }
+
+        .carrusel-btn.prev {
+            left: 20px;
+        }
+
+        .carrusel-btn.next {
+            right: 20px;
+        }
+
+        .carrusel-indicadores {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .indicador {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .indicador.activo {
+            background: linear-gradient(135deg, #00686d, #45b9b4);
+            transform: scale(1.3);
+            border-color: white;
+            box-shadow: 0 0 0 2px #fad926;
+        }
+
+        /* === SECCIÓN OBJETIVO GENERAL (tarjeta simple) === */
+        .seccion-objetivo-general {
+            background-color: #ffffff;
+            padding: 2rem 0;
+        }
+
+        .tarjeta-objetivo {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(69, 185, 180, 0.3);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .tarjeta-objetivo:hover {
+            transform: scale(1.01);
+            border-color: #45b9b4;
+        }
+
+        .icono-objetivo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .icono-objetivo i {
+            font-size: 3rem;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #00686d, #45b9b4);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 12px 20px -8px #00686d;
+        }
+
+        .tarjeta-objetivo h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00686d;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .tarjeta-objetivo p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #2d2d2d;
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+
+        .tarjeta-objetivo .nota {
+            background-color: #ededb4;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            color: #1e1e1e;
+            font-weight: 500;
+            border-left: 6px solid #f49823;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        /* === SECCIÓN ACREDITACIÓN (tarjeta simple) === */
+        .seccion-acreditacion {
+            background-color: #ffffff;
+            padding: 2rem 0;
+        }
+
+        .tarjeta-acreditacion {
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(69, 185, 180, 0.3);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .tarjeta-acreditacion:hover {
+            transform: scale(1.01);
+            border-color: #45b9b4;
+        }
+
+        .icono-acreditacion {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .icono-acreditacion i {
+            font-size: 3rem;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #00686d, #45b9b4);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 12px 20px -8px #00686d;
+        }
+
+        .tarjeta-acreditacion h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00686d;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .tarjeta-acreditacion p {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: #2d2d2d;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .tarjeta-acreditacion strong a {
+            color: #f49823; /* naranja */
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 2px solid #fad926;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .tarjeta-acreditacion strong a:hover {
+            color: #00686d; /* verde aqua */
+            border-bottom-color: #00686d;
+        }
+
+        .tarjeta-acreditacion strong a i {
+            font-size: 0.9rem;
+            margin-left: 0.3rem;
+        }
+
+        /* === NUEVA SECCIÓN: EVALUACIÓN DIAGNÓSTICA (tarjeta simple) === */
+        .seccion-diagnostica {
+            background-color: #ffffff;
+            padding: 2rem 0;
+        }
+
+        .tarjeta-diagnostica {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 32px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(69, 185, 180, 0.3);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .tarjeta-diagnostica:hover {
+            transform: scale(1.01);
+            border-color: #45b9b4;
+        }
+
+        .icono-diagnostica {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .icono-diagnostica i {
+            font-size: 3rem;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #00686d, #45b9b4);
+            color: white;
+            border-radius: 50%;
+            box-shadow: 0 12px 20px -8px #00686d;
+        }
+
+        .tarjeta-diagnostica h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00686d;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.01em;
+        }
+
+        .tarjeta-diagnostica p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #2d2d2d;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        .tarjeta-diagnostica .nota {
+            background-color: #ededb4;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            color: #1e1e1e;
+            font-weight: 500;
+            border-left: 6px solid #f49823;
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .tarjeta-diagnostica .exito {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00686d;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        /* Responsive general */
+        @media (max-width: 768px) {
+            .encuadre-banner h1 {
+                font-size: 2rem;
+            }
+            .flip-card-inner {
+                min-height: 450px;
+            }
+            .carrusel-slide {
+                min-height: 600px;
+                padding: 1.5rem;
+            }
+            .slide-content {
+                padding: 1.5rem;
+            }
+            .slide-content h3 {
+                font-size: 1.4rem;
+            }
+            .carrusel-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            .tarjeta-objetivo,
+            .tarjeta-acreditacion,
+            .tarjeta-diagnostica {
+                padding: 1.8rem;
+            }
+            .tarjeta-objetivo h3,
+            .tarjeta-acreditacion h3,
+            .tarjeta-diagnostica h3 {
+                font-size: 1.8rem;
+            }
+            .nav-secciones ul {
+                gap: 0.5rem;
+            }
+            .nav-secciones a {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- BARRA DE NAVEGACIÓN (nueva) -->
+    <nav class="nav-secciones">
+        <ul>
+            <li><a href="#encuadre"><i class="fas fa-home"></i> Encuadre</a></li>
+            <li><a href="#presentacion"><i class="fas fa-chalkboard-teacher"></i> Presentación</a></li>
+            <li><a href="#objetivo"><i class="fas fa-bullseye"></i> Objetivo</a></li>
+            <li><a href="#acreditacion"><i class="fas fa-certificate"></i> Acreditación</a></li>
+            <li><a href="#diagnostica"><i class="fas fa-question-circle"></i> Diagnóstica</a></li>
+            <!-- Espacio para una sexta sección (cuando la agregues) -->
+        </ul>
+    </nav>
+
+    <!-- ============================================= -->
+    <!-- SECCIÓN 1: ENCUADRE ACADÉMICO (con flipcards) -->
+    <!-- ============================================= -->
+    <div class="seccion-encuadre" id="encuadre">
+        <!-- Banner -->
+        <div class="encuadre-banner">
+            <h1>Encuadre Académico</h1>
+            <p>Taller de Evaluación por competencias</p>
+        </div>
+
+        <!-- Imagen destacada (reemplaza src con tu imagen) -->
+        <div class="imagen-destacada-container">
+            <img class="imagen-destacada" 
+                 src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+                 alt="Estudiantes en aula" 
+                 loading="lazy">
+        </div>
+
+        <!-- Contenedor de tres flipcards -->
+        <div class="container">
+            <div class="encuadre-columnas">
+                <!-- Flipcard 1: Lenguaje incluyente -->
+                <div class="flip-card" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-front">
+                            <i class="fas fa-equals"></i>
+                            <h3>Lenguaje incluyente y no sexista</h3>
+                            <div class="click-hint">
+                                <i class="fas fa-hand-pointer"></i> Da clic para conocer más
+                            </div>
+                        </div>
+                        <div class="flip-back">
+                            <p>Las expresiones verbales, escritas y visuales empleadas en este material educativo buscan dar igual valor a las personas y reconocer la diversidad que compone la sociedad.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flipcard 2: Política de derechos de autor -->
+                <div class="flip-card" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-front">
+                            <i class="fas fa-copyright"></i>
+                            <h3>Política de derechos de autor</h3>
+                            <div class="click-hint">
+                                <i class="fas fa-hand-pointer"></i> Da clic para conocer más
+                            </div>
+                        </div>
+                        <div class="flip-back">
+                            <p>La Universidad Digital del Estado de México promueve el uso responsable de los materiales sujetos a protección, asegurando que toda reproducción, comunicación pública, distribución o transformación de obras se realice con apego a la normatividad vigente, en un marco de legalidad, ética y respeto a la propiedad intelectual.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flipcard 3: Uso ético de IA -->
+                <div class="flip-card" onclick="this.querySelector('.flip-card-inner').classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <div class="flip-front">
+                            <i class="fas fa-robot"></i>
+                            <h3>Uso ético de las herramientas de inteligencia artificial (IA)</h3>
+                            <div class="click-hint">
+                                <i class="fas fa-hand-pointer"></i> Da clic para conocer más
+                            </div>
+                        </div>
+                        <div class="flip-back">
+                            <p>Debe aplicarse de manera responsable y transparente para fortalecer los procesos de enseñanza y aprendizaje, respetando la autoría intelectual, la protección de la privacidad y los datos personales, evitando el plagio y promoviendo un uso reflexivo que complemente y no sustituya el pensamiento crítico, la creatividad y la toma de decisiones humanas, contribuyendo así a una formación integral y ética.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SECCIÓN 2: PRESENTACIÓN (carrusel)           -->
+    <!-- ============================================= -->
+    <div class="seccion-presentacion" id="presentacion">
+        <div class="container">
+            <h2><i class="fas fa-chalkboard-teacher"></i> Presentación</h2>
+        </div>
+
+        <div class="carrusel-container">
+            <div class="carrusel-track" id="carruselTrack">
+                <!-- Slide 1: Introducción -->
+                <div class="carrusel-slide" style="background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                    <div class="slide-content">
+                        <h3><i class="fas fa-university"></i> Bienvenida</h3>
+                        <p>La Universidad Digital del Estado de México le da la más cordial bienvenida al Diplomado: Evaluación por Competencias; cuyo propósito es fortalecer los conocimientos y habilidades de este enfoque en contextos educativos, logrando entender que dentro de un programa de estudios, la formación por competencias permite enriquecer las rutas de aprendizaje, superar la memorización y centrarse en el saber ser, hacer, conocer y convivir, reconociendo la importancia de emplear una evaluación integral que permita a la persona responder a situaciones reales.</p>
+                        <p style="margin-top: 1rem; font-weight: bold;">Para su aplicación en el ámbito educativo, este diplomado está organizado de la siguiente forma:</p>
+                    </div>
+                </div>
+                <!-- Slide 2: Módulo 1 -->
+                <div class="carrusel-slide" style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                    <div class="slide-content">
+                        <h3><i class="fas fa-cube"></i> Módulo 1: Fundamentos de la educación basada en competencias</h3>
+                        <p>En el primer módulo se analizarán los Fundamentos de la educación basada en competencias, a partir de la identificación de sus principios clave, considerando los desafíos y necesidades que implica su implementación. Asimismo, se aborda la justificación de la reforma educativa y se revisan las principales estrategias para transitar a un cambio curricular que contemple el rediseño de planes y programas educativos.</p>
+                    </div>
+                </div>
+                <!-- Slide 3: Módulo 2 -->
+                <div class="carrusel-slide" style="background-image: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2022&q=80');">
+                    <div class="slide-content">
+                        <h3><i class="fas fa-chart-line"></i> Módulo 2: Proyección de la evaluación por competencias</h3>
+                        <p>El segundo módulo, titulado Proyección de la evaluación por competencias, se centra en la revisión de los aspectos fundamentales para determinar la validez, la factibilidad y la pertinencia de los procesos de evaluación. También, se identificarán las necesidades que surgen a partir de los desafíos institucionales y/o formativos, integrando la reflexión ética como un componente esencial en el diseño de la evaluación.</p>
+                    </div>
+                </div>
+                <!-- Slide 4: Módulo 3 -->
+                <div class="carrusel-slide" style="background-image: url('https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80');">
+                    <div class="slide-content">
+                        <h3><i class="fas fa-microchip"></i> Módulo 3: Educación basada en competencias (EBC)</h3>
+                        <p>En el tercer módulo se profundizará en la Educación basada en competencias (EBC), mediante el estudio de las metodologías activas para la adquisición de los conocimientos. Además, se abordará la aplicación de este enfoque en la era digital y su vinculación con la calidad educativa.</p>
+                    </div>
+                </div>
+                <!-- Slide 5: Módulo 4 -->
+                <div class="carrusel-slide" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                    <div class="slide-content">
+                        <h3><i class="fas fa-pencil-ruler"></i> Módulo 4: Pautas del diseño curricular bajo la EBC</h3>
+                        <p>El cuarto módulo titulado Pautas del diseño curricular bajo la EBC, se estudiará el diseño macro-curricular y micro-curricular como marco de referencia para dirigir el proceso formativo hacia la integralidad del desempeño profesional, tomando en cuenta la relación entre la EBC y las taxonomías para el aprendizaje.</p>
+                    </div>
+                </div>
+                <!-- Slide 6: Módulo 5 -->
+                <div class="carrusel-slide" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                    <div class="slide-content">
+                        <h3><i class="fas fa-sync-alt"></i> Módulo 5: Resignificación de la evaluación por competencias</h3>
+                        <p>Por último, en el quinto módulo titulado Resignificación de la evaluación por competencias, se analizará la alineación del enfoque de la Educación basada en competencias (EBC) con las políticas educativas vigentes del siglo XXI, así como su aplicación que permita otorgar un nuevo sentido al ejercicio evaluativo en México, junto con la identificación de estrategias de intervención orientadas al fortalecimiento de este enfoque.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de navegación -->
+            <button class="carrusel-btn prev" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+            <button class="carrusel-btn next" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <!-- Indicadores (puntos) -->
+        <div class="carrusel-indicadores" id="indicadores"></div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SECCIÓN 3: OBJETIVO GENERAL (tarjeta simple) -->
+    <!-- ============================================= -->
+    <div class="seccion-objetivo-general" id="objetivo">
+        <div class="container">
+            <div class="tarjeta-objetivo">
+                <div class="icono-objetivo">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3>Objetivo general</h3>
+                <p>Al término del estudio de este diplomado usted podrá: Analizar los fundamentos y proyecciones de la educación por competencias a través del estudio pedagógico y didáctico de sus principios orientadores, con el propósito de actualizar los métodos del quehacer académico y profesional, y fortalecer los procesos de evaluación integral del aprendizaje.</p>
+                <p class="nota">Para lograr dicho objetivo se deben revisar todos los temas, videos, lecturas, así como participar en los foros y realizar las actividades prácticas y teóricas, ya que todo es parte del aprendizaje.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SECCIÓN 4: ACREDITACIÓN (tarjeta simple)     -->
+    <!-- ============================================= -->
+    <div class="seccion-acreditacion" id="acreditacion">
+        <div class="container">
+            <div class="tarjeta-acreditacion">
+                <div class="icono-acreditacion">
+                    <i class="fas fa-certificate"></i>
+                </div>
+                <h3>Acreditación</h3>
+                <p>El diplomado se aprueba con 7 puntos en una escala del 0 al 10, de acuerdo con la información contenida en: <strong><a href="https://udemex-my.sharepoint.com/:b:/g/personal/monica_salazar_udemex_edu_mx/IQBZ0NOwlP4LQ5_6M-BIpJZbATWEOrn_6zaJGpU9VlT2_XM?e=IGKHph" onclick="window.open(this.href, 'popup', 'width=800,height=800,scrollbars=yes,resizable=yes'); return false;">"El programa educativo" <i class="fas fa-external-link-alt"></i></a></strong></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- SECCIÓN 5: EVALUACIÓN DIAGNÓSTICA (nueva)     -->
+    <!-- ============================================= -->
+    <div class="seccion-diagnostica" id="diagnostica">
+        <div class="container">
+            <div class="tarjeta-diagnostica">
+                <div class="icono-diagnostica">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3>Evaluación Diagnóstica</h3>
+                <p>Después de que haya revisado el programa educativo y, que conozca los detalles de este diplomado, es momento de realizar un cuestionario que tiene como objetivo conocer los saberes previos sobre los temas que aquí se abordarán, para ello debe ir al apartado de "Evaluación diagnóstica".</p>
+                <p class="nota">Nota: La puntuación que obtenga al final de esta evaluación no perjudica su calificación final.</p>
+                <p class="exito">¡Le deseamos éxito!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- (Espacio para una sexta sección)              -->
+    <!-- ============================================= -->
+    <!-- Aquí puedes agregar la segunda nueva sección cuando tengas el texto. 
+         Ejemplo: 
+         <div class="seccion-nueva" id="nueva2"> ... </div>
+    -->
+
+    <!-- Script del carrusel -->
+    <script>
+        (function() {
+            const track = document.getElementById('carruselTrack');
+            const slides = Array.from(document.querySelectorAll('.carrusel-slide'));
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicadoresContainer = document.getElementById('indicadores');
+
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+
+            function crearIndicadores() {
+                indicadoresContainer.innerHTML = '';
+                for (let i = 0; i < totalSlides; i++) {
+                    const indicador = document.createElement('span');
+                    indicador.classList.add('indicador');
+                    indicador.addEventListener('click', () => goToSlide(i));
+                    indicadoresContainer.appendChild(indicador);
+                }
+                actualizarIndicadores();
+            }
+
+            function actualizarIndicadores() {
+                const indicadores = document.querySelectorAll('.indicador');
+                indicadores.forEach((ind, idx) => {
+                    if (idx === currentIndex) {
+                        ind.classList.add('activo');
+                    } else {
+                        ind.classList.remove('activo');
+                    }
+                });
+            }
+
+            function goToSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+                currentIndex = index;
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                actualizarIndicadores();
+            }
+
+            prevBtn.addEventListener('click', () => {
+                goToSlide(currentIndex - 1);
+            });
+
+            nextBtn.addEventListener('click', () => {
+                goToSlide(currentIndex + 1);
+            });
+
+            crearIndicadores();
+            goToSlide(0);
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    goToSlide(currentIndex - 1);
+                } else if (e.key === 'ArrowRight') {
+                    goToSlide(currentIndex + 1);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
